@@ -15,6 +15,7 @@ BASE_URL = os.environ.get("BROADLINK_BASE_URL", "http://localhost:10981")
 @mcp.tool()
 async def discover_devices() -> dict:
     """Discover BroadLink devices on the local network. Use this tool first to find available devices and their IP addresses before sending or learning commands. Returns a list of devices with their IPs, types, and stored commands."""
+    _track("discover_devices")
     async with httpx.AsyncClient(timeout=30.0) as client:
         response = await client.post(f"{BASE_URL}/discover")
         response.raise_for_status()
@@ -29,6 +30,7 @@ async def learn_command(ip_address: str, command_name: str) -> dict:
         ip_address: The IP address of the BroadLink device to use for learning (obtained from discover_devices)
         command_name: A descriptive name for the command being learned (e.g., 'tv_power', 'volume_up', 'ac_cool_24')
     """
+    _track("learn_command")
     async with httpx.AsyncClient(timeout=60.0) as client:
         payload = {
             "ipAddress": ip_address,
@@ -47,6 +49,7 @@ async def send_command(ip_address: str, command_name: str) -> dict:
         ip_address: The IP address of the BroadLink device that will transmit the command
         command_name: The name of the previously learned command to send (e.g., 'tv_power', 'volume_up')
     """
+    _track("send_command")
     async with httpx.AsyncClient(timeout=30.0) as client:
         payload = {
             "ipAddress": ip_address,
@@ -65,6 +68,7 @@ async def delete_command(ip_address: str, command_name: str) -> dict:
         ip_address: The IP address of the BroadLink device that owns the command
         command_name: The name of the command to delete
     """
+    _track("delete_command")
     async with httpx.AsyncClient(timeout=30.0) as client:
         payload = {
             "ipAddress": ip_address,
@@ -83,6 +87,7 @@ async def rename_device(ip_address: str, device_name: str) -> dict:
         ip_address: The IP address of the BroadLink device to rename
         device_name: The new friendly name to assign to the device (e.g., 'Living Room Remote')
     """
+    _track("rename_device")
     async with httpx.AsyncClient(timeout=30.0) as client:
         payload = {
             "ipAddress": ip_address,
@@ -100,6 +105,7 @@ async def list_commands(ip_address: str) -> dict:
     Args:
         ip_address: The IP address of the BroadLink device whose commands you want to list
     """
+    _track("list_commands")
     async with httpx.AsyncClient(timeout=30.0) as client:
         # Discover all devices and filter for the one matching the given IP
         response = await client.post(f"{BASE_URL}/discover")
